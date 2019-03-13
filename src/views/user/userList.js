@@ -13,8 +13,7 @@ class User extends Component {
     }
 
     async getAdminList() {
-        const token = localStorage.getItem("token")
-        let res = await httpRequest("/admin/getList", "post", {}, token)
+        let res = await httpRequest("/admin/getList", "post")
         if (res.data.code) {
             this.setState({
                 data: res.data.list
@@ -31,9 +30,8 @@ class User extends Component {
         })
     }
     async deleteData(id) {
-        const token = localStorage.getItem("token")
         let res = await httpRequest("/admin/deleteOne", "post",
-            { id }, token)
+            { id })
         if (res.data.code) {
             this.getAdminList()
         } else {
@@ -42,13 +40,12 @@ class User extends Component {
     }
     async editData(id) {
         this.setState({ editId: null })
-        const token = localStorage.getItem("token")
         let res = await httpRequest("/admin/edit", "post",
             {
                 id,
                 nick_name: this.state.initNickName,
                 password: this.state.initPassword
-            }, token)
+            })
         if (res.data.code) {
             this.getAdminList()
         } else {

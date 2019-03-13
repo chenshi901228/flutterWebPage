@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const baseUrl = "http://localhost:3001"
-
+const token = localStorage.getItem("token")
 
 /**
  * @param {string} url 接口地址
@@ -11,7 +11,7 @@ const baseUrl = "http://localhost:3001"
  * @return 返回Promise
  */
 
-export async function httpRequest(url, method, params = {}, token = "") {
+export async function httpRequest(url, method, params = {}) {
     return await axios({
         method: method,
         url: baseUrl + url,

@@ -5,6 +5,10 @@ import {
 } from 'antd';
 
 import User from './views/user/userList'
+import Classify from './views/classify/classify'
+import AddGoods from './views/classify/addGoods'
+import AddStore from './views/store/addStore'
+import StoreList from './views/store/storeList'
 import { httpRequest } from './utils/httpRequest'
 
 const {
@@ -15,7 +19,9 @@ const SubMenu = Menu.SubMenu;
 class App extends Component {
   state = {
     loginPage: false,
-    admin: ""
+    admin: "",
+    openKey: [],
+    selectedKey: []
   }
   loginBtn() {
     this.setState({
@@ -32,9 +38,27 @@ class App extends Component {
       admin: phone
     })
   }
+  menuClick = (e) => {
+    this.setState({
+      selectedKey: [e.key]
+    })
+    sessionStorage.setItem("menuItem", e.key)
+  }
+  menuOpenChange = (e) => {
+    this.setState({
+      openKey: e
+    })
+    sessionStorage.setItem("menuOpen", JSON.stringify(e))
+  }
   componentDidMount() {
     const admin = localStorage.getItem("admin")
-    this.setState({ admin: admin })
+    const menuItem = sessionStorage.getItem("menuItem") || "1-1"
+    const menuOpen = JSON.parse(sessionStorage.getItem("menuOpen")) || ["1"]
+    this.setState({
+      admin: admin,
+      openKey: menuOpen,
+      selectedKey: [menuItem]
+    })
   }
   render() {
     return (
@@ -61,13 +85,22 @@ class App extends Component {
           <Menu
             mode="inline"
             theme="dark"
-            defaultSelectedKeys={['1']}
-            defaultOpenKeys={['sub1']}
+            onClick={this.menuClick}
+            onOpenChange={this.menuOpenChange}
+            openKeys={this.state.openKey}
+            selectedKeys={this.state.selectedKey}
             style={{ height: '100%', borderRight: 0 }}
           >
-            <SubMenu key="sub1" title={<span><Icon type="user" />用户管理</span>}>
-              <Menu.Item key="1"><NavLink to="/user/userList">用户列表</NavLink></Menu.Item>
-              {/* <Menu.Item key="2"><NavLink to="/user/table">用户列表1</NavLink></Menu.Item> */}
+            <SubMenu key="1" title={<span><Icon type="user" />用户管理</span>}>
+              <Menu.Item key="1-1"><NavLink to="/user/userList">用户列表</NavLink></Menu.Item>
+            </SubMenu>
+            <SubMenu key="2" title={<span><Icon type="bars" />商品分类</span>}>
+              <Menu.Item key="2-1"><NavLink to="/goods/classify">分类</NavLink></Menu.Item>
+              <Menu.Item key="2-2"><NavLink to="/goods/addGoods">添加商品</NavLink></Menu.Item>
+            </SubMenu>
+            <SubMenu key="3" title={<span><Icon type="shop" />店铺管理</span>}>
+              <Menu.Item key="3-1"><NavLink to="/store/storeList">店铺列表</NavLink></Menu.Item>
+              <Menu.Item key="3-2"><NavLink to="/store/addStore">添加店铺</NavLink></Menu.Item>
             </SubMenu>
           </Menu>
         </Sider>
@@ -75,7 +108,10 @@ class App extends Component {
           <Content style={{ margin: '100px 16px 0', overflow: 'initial' }}>
             <div style={{ padding: 24, background: '#fff' }}>
               <Route path="/user/userList" component={User} />
-              {/* <Route path="/user/table" component={Edittable} /> */}
+              <Route path="/goods/classify" component={Classify} />
+              <Route path="/goods/addGoods" component={AddGoods} />
+              <Route path="/store/storeList" component={StoreList} />
+              <Route path="/store/addStore" component={AddStore} />
             </div>
           </Content>
         </Layout>
@@ -93,8 +129,10 @@ class LoginForm extends Component {
         let params = { phone: parseInt(values.phone), password: values.password }
         let res = await httpRequest("/admin/login", "post", params)
         if (res.data.code) {
+          message.success(res.data.msg)
           localStorage.setItem("token", res.data.token)
           localStorage.setItem("admin", res.data.phone)
+          localStorage.setItem("adminId", JSON.stringify(res.data.id))
           this.props.handle();
           this.props.loginType(res.data.phone)
           this.props.form.resetFields()
