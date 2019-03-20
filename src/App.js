@@ -10,6 +10,7 @@ import AddGoods from './views/classify/addGoods'
 import AddStore from './views/store/addStore'
 import StoreList from './views/store/storeList'
 import GoodsList from './views/classify/goodsList'
+import Banner from './views/classify/banner'
 import { httpRequest } from './utils/httpRequest'
 
 const {
@@ -99,6 +100,7 @@ class App extends Component {
               <Menu.Item key="2-1"><NavLink to="/goods/classify">分类</NavLink></Menu.Item>
               <Menu.Item key="2-2"><NavLink to="/goods/addGoods">添加商品</NavLink></Menu.Item>
               <Menu.Item key="2-3"><NavLink to="/goods/goodsList">商品列表</NavLink></Menu.Item>
+              <Menu.Item key="2-4"><NavLink to="/goods/banner">首页banner</NavLink></Menu.Item>
             </SubMenu>
             <SubMenu key="3" title={<span><Icon type="shop" />店铺管理</span>}>
               <Menu.Item key="3-1"><NavLink to="/store/storeList">店铺列表</NavLink></Menu.Item>
@@ -115,6 +117,7 @@ class App extends Component {
               <Route path="/goods/goodsList" component={GoodsList} />
               <Route path="/store/storeList" component={StoreList} />
               <Route path="/store/addStore" component={AddStore} />
+              <Route path="/goods/banner" component={Banner} />
             </div>
           </Content>
         </Layout>
